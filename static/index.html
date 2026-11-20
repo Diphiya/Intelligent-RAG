@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Document Q&amp;A</title>
+<style>
+ :root{--bg:#f6f7f9;--card:#fff;--ink:#1c2230;--mute:#667085;--line:#e3e6ec;--acc:#3b5bdb;--ok:#2b8a3e;--warn:#e67700;--bad:#c92a2a}
+ *{box-sizing:border-box}body{margin:0;font:15px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+ header{padding:14px 24px;background:var(--card);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+ h1{font-size:18px;margin:0}main{display:grid;grid-template-columns:320px 1fr;gap:16px;padding:16px;max-width:1200px;margin:auto;height:calc(100vh - 58px)}
+ .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto}
+ .side h2,.chat h2{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);margin:0 0 10px}
+ .drop{border:2px dashed var(--line);border-radius:8px;padding:16px;text-align:center;color:var(--mute);cursor:pointer}.drop.over{border-color:var(--acc);color:var(--acc)}
+ .doc{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}.doc small{color:var(--mute)}
+ .doc button{border:0;background:none;color:var(--bad);cursor:pointer}
+ .res{font-size:12px;margin-top:8px}.res .ingested{color:var(--ok)}.res .duplicate{color:var(--warn)}.res .failed{color:var(--bad)}
+ .chat{display:flex;flex-direction:column}#log{flex:1;overflow:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:8px}
+ .msg{max-width:88%;padding:10px 12px;border-radius:10px;white-space:pre-wrap}.user{align-self:flex-end;background:var(--acc);color:#fff}
+ .bot{align-self:flex-start;background:#f1f3f7}.bot.unans{background:#fff4e6;border:1px solid #ffd8a8}
+ .meta{font-size:12px;color:var(--mute);margin-top:8px;white-space:normal}.badge{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11px;margin-right:6px;color:#fff}
+ .high{background:var(--ok)}.medium{background:var(--warn)}.low,.none{background:var(--bad)}.conflict{background:#7048e8}
+ details{margin-top:6px;white-space:normal}summary{cursor:pointer;color:var(--acc)}.snip{font-size:12px;color:#444;border-left:3px solid var(--line);padding-left:8px;margin:4px 0}
+ form{display:flex;gap:8px;margin-top:8px}input[type=text]{flex:1;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit}
+ button.send{padding:10px 18px;border:0;border-radius:8px;background:var(--acc);color:#fff;font:inherit;cursor:pointer}button:disabled{opacity:.5}
+ @media(max-width:800px){main{grid-template-columns:1fr;height:auto}}
+</style></head><body>
+<header><h1>📄 Document Q&amp;A <small style="color:var(--mute);font-weight:400">grounded answers with citations</small></h1><button onclick="newChat()" style="border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;cursor:pointer">New conversation</button></header>
+<main>
+ <section class="card side"><h2>Documents</h2>
+  <div class="drop" id="drop">Drop PDF / TXT files here<br>or click to choose<input id="file" type="file" multiple accept=".pdf,.txt" hidden></div>
+  <div class="res" id="res"></div><div id="docs" style="margin-top:12px"></div></section>
+ <section class="card chat"><h2>Conversation</h2><div id="log"></div>
+  <form id="f"><input type="text" id="q" placeholder="Ask a question about your documents…" autocomplete="off"><button class="send" id="send">Ask</button></form></section>
+</main>
+<script>
+let session=null;const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function loadDocs(){const r=await fetch('/documents');const d=await r.json();
+ $('docs').innerHTML=d.length?d.map(x=>`<div class="doc"><div>${esc(x.filename)}<br><small>${x.pages} page(s) · ${x.chunks} chunks</small></div><button title="Delete" onclick="del('${x.doc_id}')">✕</button></div>`).join(''):'<small style="color:var(--mute)">No documents yet.</small>'}
+async function del(id){await fetch('/documents/'+id,{method:'DELETE'});loadDocs()}
+async function upload(files){const fd=new FormData();[...files].forEach(f=>fd.append('files',f));$('res').textContent='Uploading…';
+ const r=await fetch('/documents',{method:'POST',body:fd});const j=await r.json();
+ $('res').innerHTML=Array.isArray(j)?j.map(x=>`<div class="${x.status}">${esc(x.filename)}: ${x.status}${x.message?' — '+esc(x.message):''}</div>`).join(''):esc(JSON.stringify(j));loadDocs()}
+$('drop').onclick=()=>$('file').click();$('file').onchange=e=>upload(e.target.files);
+['dragover','dragenter'].forEach(ev=>$('drop').addEventListener(ev,e=>{e.preventDefault();$('drop').classList.add('over')}));
+['dragleave','drop'].forEach(ev=>$('drop').addEventListener(ev,e=>{e.preventDefault();$('drop').classList.remove('over')}));
+$('drop').addEventListener('drop',e=>upload(e.dataTransfer.files));
+function add(cls,html){const d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;$('log').appendChild(d);$('log').scrollTop=1e9;return d}
+function render(r){const cites=r.citations.map(c=>`<details><summary>[${c.label}] ${esc(c.source)}${c.page?' · p.'+c.page:''} · score ${c.score}${c.also_in.length?' · also in '+esc(c.also_in.join(', ')):''}</summary><div class="snip">${esc(c.snippet)}</div></details>`).join('');
+ const rt=r.retrieval;const badges=`<span class="badge ${r.confidence}">confidence: ${r.confidence}</span>${r.conflict_detected?'<span class="badge conflict">conflicting sources</span>':''}`;
+ const warn=r.warnings.length?`<div class="meta">⚠ ${esc(r.warnings.join(', '))}</div>`:'';
+ const note=r.conflict_note?`<div class="meta"><b>Conflict:</b> ${esc(r.conflict_note)}</div>`:'';
+ const why=!r.answerable?`<div class="meta">Why: ${esc(r.unanswerable_reason||'no relevant passages')} · best match score ${rt.top_score} (threshold ${rt.threshold})${rt.nearest.length?' · closest: '+esc(rt.nearest.map(n=>n.source).join(', ')):''}</div>`:'';
+ return `${esc(r.answer)}<div class="meta">${badges}</div>${note}${cites}${why}${warn}<div class="meta">${r.rewritten_query!==r.question?'searched for: “'+esc(r.rewritten_query)+'” · ':''}${r.latency_ms} ms</div>`}
+$('f').onsubmit=async e=>{e.preventDefault();const q=$('q').value.trim();if(!q)return;$('q').value='';add('user',esc(q));$('send').disabled=true;const w=add('bot','…');
+ try{const r=await fetch('/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q,session_id:session})});const j=await r.json();
+  if(!r.ok){w.className='msg bot unans';w.textContent='Error: '+(j.error?j.error.message:JSON.stringify(j))}else{session=j.session_id;w.className='msg bot'+(j.answerable?'':' unans');w.innerHTML=render(j)}}
+ catch(err){w.textContent='Network error: '+err}$('send').disabled=false;$('q').focus()};
+function newChat(){if(session)fetch('/sessions/'+session,{method:'DELETE'});session=null;$('log').innerHTML=''}
+loadDocs();
+</script></body></html>

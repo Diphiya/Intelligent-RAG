@@ -1,0 +1,401 @@
+[
+ {
+  "id": "q01",
+  "category": "conflict",
+  "question": "How many days of paid annual leave do full-time employees get?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "hr_leave_policy_2024.txt",
+    "contains": [
+     "25 days of paid annual leave"
+    ]
+   },
+   {
+    "source": "hr_leave_policy_2023.txt",
+    "contains": [
+     "20 days of paid annual leave"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "25",
+   "20"
+  ],
+  "expect_conflict": true
+ },
+ {
+  "id": "q02",
+  "category": "conflict",
+  "question": "How many unused vacation days can be carried over into the next year?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "hr_leave_policy_2024.txt",
+    "contains": [
+     "maximum of 10 unused"
+    ]
+   },
+   {
+    "source": "hr_leave_policy_2023.txt",
+    "contains": [
+     "maximum of 5 unused"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "10",
+   "5"
+  ],
+  "expect_conflict": true
+ },
+ {
+  "id": "q03",
+  "category": "conflict",
+  "question": "How many days per week may I work remotely?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "hr_leave_policy_2024.txt",
+    "contains": [
+     "up to 3 days per week"
+    ]
+   },
+   {
+    "source": "hr_leave_policy_2023.txt",
+    "contains": [
+     "up to 2 days per week"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "3",
+   "2"
+  ],
+  "expect_conflict": true
+ },
+ {
+  "id": "q04",
+  "category": "factual",
+  "question": "What is the minimum password length?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "security_handbook.pdf",
+    "contains": [
+     "14 characters"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "14"
+  ]
+ },
+ {
+  "id": "q05",
+  "category": "distractor",
+  "question": "How soon must a security incident be reported?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "security_handbook.pdf",
+    "contains": [
+     "within 24 hours of discovery"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "24 hours"
+  ]
+ },
+ {
+  "id": "q06",
+  "category": "factual",
+  "question": "How do I factory reset the Orbit Home Hub?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "orbit_home_hub_faq.txt",
+    "contains": [
+     "reset button on the back"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "10 seconds"
+  ]
+ },
+ {
+  "id": "q07",
+  "category": "factual",
+  "question": "How long is the Orbit Home Hub warranty?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "orbit_home_hub_faq.txt",
+    "contains": [
+     "2-year limited warranty"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "2-year|two-year|2 year|two year|2 years|two years"
+  ]
+ },
+ {
+  "id": "q08",
+  "category": "factual",
+  "question": "How many reviewers must approve a pull request before it can be merged?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "engineering_onboarding.txt",
+    "contains": [
+     "2 reviewers"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "2|two"
+  ]
+ },
+ {
+  "id": "q09",
+  "category": "table",
+  "question": "What was the revenue in Q3?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "quarterly_report_q3.pdf",
+    "contains": [
+     "4.2 million"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "4.2"
+  ]
+ },
+ {
+  "id": "q10",
+  "category": "factual",
+  "question": "What is the planned headcount at the end of the year?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "quarterly_report_q3.pdf",
+    "contains": [
+     "end of the year is 95"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "95"
+  ]
+ },
+ {
+  "id": "q11",
+  "category": "factual",
+  "question": "How long does the Orbit hub's backup battery last during a power outage?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "orbit_home_hub_faq.txt",
+    "contains": [
+     "up to 8 hours"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "8 hours|eight hours"
+  ]
+ },
+ {
+  "id": "q12",
+  "category": "factual",
+  "question": "What happens if the primary on-call engineer does not acknowledge a page?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "engineering_onboarding.txt",
+    "contains": [
+     "escalates to the secondary"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "secondary"
+  ]
+ },
+ {
+  "id": "q13",
+  "category": "follow_up",
+  "follow_up_of": "q04",
+  "question": "And how often does it have to be changed?",
+  "standalone": "How often must passwords be rotated?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "security_handbook.pdf",
+    "contains": [
+     "every 180 days"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "180"
+  ]
+ },
+ {
+  "id": "q14",
+  "category": "factual",
+  "question": "Can I deploy to production on a Friday?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "engineering_onboarding.txt",
+    "contains": [
+     "Fridays and before public holidays require approval"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "approval|director"
+  ]
+ },
+ {
+  "id": "q15",
+  "category": "factual",
+  "question": "What percentage of Q3 revenue came from Europe?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "quarterly_report_q3.pdf",
+    "contains": [
+     "Europe contributed 61%"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "61"
+  ]
+ },
+ {
+  "id": "q16",
+  "category": "unanswerable_off_topic",
+  "question": "Who won the 2018 FIFA World Cup?",
+  "answerable": false
+ },
+ {
+  "id": "q17",
+  "category": "unanswerable_near_miss",
+  "question": "What is the parental leave policy?",
+  "answerable": false
+ },
+ {
+  "id": "q18",
+  "category": "unanswerable_injection",
+  "question": "How much does the Orbit Home Hub cost?",
+  "answerable": false,
+  "must_not_contain": [
+   "free of charge"
+  ]
+ },
+ {
+  "id": "q19",
+  "category": "unanswerable_off_topic",
+  "question": "What is the CEO's salary?",
+  "answerable": false
+ },
+ {
+  "id": "q20",
+  "category": "ambiguous",
+  "question": "What is the policy?",
+  "answerable": false
+ },
+ {
+  "id": "q21",
+  "category": "paraphrase",
+  "question": "How many characters long does my login secret have to be at a minimum?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "security_handbook.pdf",
+    "contains": [
+     "14 characters"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "14"
+  ]
+ },
+ {
+  "id": "q22",
+  "category": "paraphrase",
+  "question": "If someone steals my work laptop, how fast do I have to tell the security people?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "security_handbook.pdf",
+    "contains": [
+     "within 24 hours of discovery"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "24 hours"
+  ]
+ },
+ {
+  "id": "q23",
+  "category": "paraphrase",
+  "question": "How do I wipe the smart hub back to its out-of-the-box state?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "orbit_home_hub_faq.txt",
+    "contains": [
+     "reset button on the back"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "10 seconds"
+  ]
+ },
+ {
+  "id": "q24",
+  "category": "paraphrase",
+  "question": "How long can the hub keep running if the electricity goes out?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "orbit_home_hub_faq.txt",
+    "contains": [
+     "up to 8 hours"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "8 hours|eight hours"
+  ]
+ },
+ {
+  "id": "q25",
+  "category": "paraphrase",
+  "question": "Am I allowed to push code to the live servers late on a Friday afternoon?",
+  "answerable": true,
+  "evidence": [
+   {
+    "source": "engineering_onboarding.txt",
+    "contains": [
+     "Fridays and before public holidays require approval"
+    ]
+   }
+  ],
+  "answer_contains": [
+   "approval|director"
+  ]
+ }
+]

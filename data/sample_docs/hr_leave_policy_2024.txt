@@ -1,0 +1,32 @@
+Northwind Labs - Employee Leave Policy (Version 2024)
+Effective date: 1 January 2024. This version supersedes the 2023 policy.
+
+1. Annual Leave
+Full-time employees are entitled to 25 days of paid annual leave per calendar year. Leave accrues monthly. Requests must be submitted to the line manager at least 10 working days in advance for absences longer than 3 days.
+
+2. Carry-over
+Employees may carry over a maximum of 10 unused annual leave days into the following year. Carried-over days expire on 30 April.
+
+3. Sick Leave
+Employees receive 10 days of paid sick leave per year. A medical certificate is required for absences longer than 3 consecutive days.
+
+4. Remote Work
+Employees may work remotely up to 3 days per week with manager approval. Core collaboration hours are 10:00 to 15:00 local time.
+
+5. Public Holidays
+Northwind Labs observes the public holidays of the country where the employee is contracted. Employees working on a public holiday receive a day off in lieu within 30 days.
+
+6. Unpaid Leave
+Employees may request up to 30 days of unpaid leave per year with approval from the engineering or department director. Unpaid leave does not accrue annual leave.
+
+7. Bereavement Leave
+Employees receive 3 days of paid bereavement leave on the death of an immediate family member. Additional unpaid time may be agreed with the line manager.
+
+8. How to Request Leave
+All leave requests are submitted through the HR portal. The line manager approves or declines a request within 5 working days. Approved leave appears in the shared team calendar. Employees should not book non-refundable travel before approval is confirmed.
+
+9. Leave During Notice Period
+Employees serving a notice period may not take annual leave without written approval from HR. Untaken annual leave is paid out on the final working day, calculated pro rata.
+
+10. Questions
+Contact the People Operations team through the HR portal for questions about this policy. This policy applies to full-time employees only; part-time employees receive leave pro rata.

@@ -1,0 +1,28 @@
+Engineering Onboarding Guide
+
+Week one
+On day one you receive your laptop and accounts. Days two and three are for environment setup and reading the architecture overview. On day four you pair with your onboarding buddy on a starter ticket. By Friday your first pull request should be open.
+
+Code review
+Every pull request requires approval from 2 reviewers before it can be merged, and at least one reviewer must be from the owning team. Authors may not merge their own pull requests. The continuous integration pipeline must pass before merging.
+
+Deployments
+Production deployments are allowed Monday to Thursday between 09:00 and 16:00 CET. Deployments on Fridays and before public holidays require approval from the engineering director. Every deployment must have a documented rollback plan.
+
+On-call rotation
+Engineers join the on-call rotation after three months. Each shift lasts one week. The primary on-call engineer must acknowledge a page within 15 minutes. If there is no acknowledgement, the page escalates to the secondary on-call engineer and then to the engineering manager.
+
+Production incidents
+When a severity 1 production incident is declared, an incident commander must be assigned within 10 minutes. The incident commander coordinates the response and posts updates to the status channel every 30 minutes. A blameless post-mortem must be published within 5 working days of resolution.
+
+Security training
+All new engineers must complete the secure-coding training within 30 days of joining. The training takes about two hours and covers input validation, secrets handling and dependency hygiene. Report any suspected vulnerability to the Security Team rather than discussing it in public channels.
+
+Meetings and communication
+The daily stand-up is at 09:30 CET and lasts 15 minutes. Sprint planning takes place every second Monday. Design documents are required for any change that touches more than two services and must be reviewed before implementation starts.
+
+Documentation standards
+Every service must have a README with setup steps, an architecture overview, and the on-call runbook. Runbooks are reviewed every six months. Public API changes must be recorded in the changelog.
+
+Tools
+The team uses Git for version control, GitHub Actions for continuous integration, and Terraform for infrastructure. Secrets are stored in the company vault and must never be committed to a repository.
