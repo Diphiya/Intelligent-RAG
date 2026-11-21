@@ -44,6 +44,10 @@ def validate_answer(ans: LLMAnswer, labelled: dict[str, RetrievedChunk], questio
             warnings.append(f"invalid_citation:{lab}")
     ans.citations = valid
 
+    visible = re.sub(r"[^0-9A-Za-z\u00C0-\u024F]", "", _MARKER.sub("", ans.answer))
+    if valid and len(visible) < 2:                     # e.g. "x" or "[S1]": cited, but not an answer a user can read
+        warnings.append("answer_too_short")
+        valid = []
     if not valid:
         warnings.append("answer_without_valid_citation")
         ans.answerable = False

@@ -1,3 +1,4 @@
+import pytest
 from rag.generation import build_context
 from rag.grounding import validate_answer
 from rag.schemas import Chunk, LLMAnswer, RetrievedChunk
@@ -54,3 +55,15 @@ def test_year_that_appears_only_in_the_source_filename_is_not_flagged():
     labelled = {"S1": rc("Remote work is allowed up to 3 days per week.", source="hr_leave_policy_2024.txt")}
     a, w = validate_answer(LLMAnswer(answerable=True, answer="The 2024 policy allows 3 days [S1].", citations=["S1"], confidence="high"), labelled, "remote days?")
     assert not [x for x in w if x.startswith("unsupported")] and a.confidence == "high"
+
+
+@pytest.mark.parametrize("text", ["x", "", "[S1]", " . "])
+def test_cited_but_unreadable_answer_is_not_accepted(text):
+    a, w = validate_answer(LLMAnswer(answerable=True, answer=text, citations=["S1"]), LAB, "q")
+    assert not a.answerable and "answer_too_short" in w and "answer_without_valid_citation" in w
+
+
+def test_short_but_real_answers_are_kept():
+    for text in ("No [S1].", "Yes [S1]", "14 [S1]"):
+        a, w = validate_answer(LLMAnswer(answerable=True, answer=text, citations=["S1"]), LAB, "q")
+        assert a.answerable and "answer_too_short" not in w

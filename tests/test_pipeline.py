@@ -22,7 +22,7 @@ def test_answerable_flow_returns_structured_cited_response(make_pipeline):
 
 
 def test_prompt_contains_numbered_passages_and_rules(make_pipeline):
-    llm = ScriptedLLM([answer(answer="x [S1]", citations=["S1"])])
+    llm = ScriptedLLM([answer(answer="Placeholder answer one [S1]", citations=["S1"])])
     make_pipeline(llm).ask("What is the minimum password length?")
     call = llm.calls[0]
     assert '<passage label="S1"' in call["user"] and "ONLY from the numbered passages" in call["system"]
@@ -83,7 +83,7 @@ def test_followup_is_rewritten_with_history_and_retrieval_uses_rewrite(make_pipe
 
 
 def test_rewrite_failure_falls_back_to_heuristic(make_pipeline):
-    llm = ScriptedLLM(structured=[answer(answer="a [S1]", citations=["S1"]), answer(answer="b [S1]", citations=["S1"])],
+    llm = ScriptedLLM(structured=[answer(answer="Answer for session A [S1]", citations=["S1"]), answer(answer="Answer for session B [S1]", citations=["S1"])],
                       text=[LLMUnavailable("down")])
     p = make_pipeline(llm)
     p.ask("What is the minimum password length?", "s")
@@ -92,7 +92,7 @@ def test_rewrite_failure_falls_back_to_heuristic(make_pipeline):
 
 
 def test_sessions_are_isolated(make_pipeline):
-    llm = ScriptedLLM([answer(answer="a [S1]", citations=["S1"]), answer(answer="b [S1]", citations=["S1"])])
+    llm = ScriptedLLM([answer(answer="Answer for session A [S1]", citations=["S1"]), answer(answer="Answer for session B [S1]", citations=["S1"])])
     p = make_pipeline(llm)
     p.ask("What is the minimum password length?", "A")
     r = p.ask("How long is the Orbit Home Hub warranty?", "B")
