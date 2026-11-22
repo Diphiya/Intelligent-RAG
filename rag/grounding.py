@@ -57,8 +57,9 @@ def validate_answer(ans: LLMAnswer, labelled: dict[str, RetrievedChunk], questio
         return ans, warnings
 
     # The model is shown each passage's source name (e.g. hr_leave_policy_2024.txt), so numbers taken from it are grounded too.
-    evidence = " ".join(f"{labelled[l].chunk.text} {labelled[l].chunk.source}" for l in valid)
-    answer_text = _MARKER.sub("", ans.answer)
+    # Cited passages plus the file name of every passage the model was shown (it can legitimately mention "the 2024 policy").
+    evidence = " ".join(f"{labelled[l].chunk.text}" for l in valid) + " " + " ".join(rc.chunk.source for rc in labelled.values())
+    answer_text = re.sub(r"\bS\d+\b", "", _MARKER.sub("", ans.answer))    # "S1" is a passage label, not a quantity
     unsupported = sorted(numbers(answer_text) - numbers(evidence) - numbers(question))
     if unsupported:
         warnings.extend(f"unsupported_number:{n}" for n in unsupported)

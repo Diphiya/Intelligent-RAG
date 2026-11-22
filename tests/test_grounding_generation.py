@@ -67,3 +67,17 @@ def test_short_but_real_answers_are_kept():
     for text in ("No [S1].", "Yes [S1]", "14 [S1]"):
         a, w = validate_answer(LLMAnswer(answerable=True, answer=text, citations=["S1"]), LAB, "q")
         assert a.answerable and "answer_too_short" not in w
+
+
+def test_plain_passage_label_in_answer_is_not_an_unsupported_number():
+    a, w = validate_answer(LLMAnswer(answerable=True, answer="It is stated in S1 [S1].", citations=["S1"]), LAB, "q")
+    assert not [x for x in w if x.startswith("unsupported")]
+
+
+def test_year_from_any_shown_file_name_is_not_flagged():
+    lab = dict(LAB)
+    other = LAB["S1"].model_copy(deep=True)
+    other.chunk = other.chunk.model_copy(update={"source": "policy_2024.txt", "id": "x"})
+    lab["S2"] = other
+    a, w = validate_answer(LLMAnswer(answerable=True, answer="The 2024 policy is silent on this [S1].", citations=["S1"]), lab, "q")
+    assert not [x for x in w if x.startswith("unsupported")]

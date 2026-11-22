@@ -70,6 +70,7 @@ class Retriever:
         top_k: int | None = None,
         min_relevance: float | None = None,
         apply_gate: bool = True,
+        include_versions: bool = False,
     ) -> RetrievalResult:
         mode = mode or self.s.retrieval_mode
         top_k = top_k or self.s.top_k
@@ -101,12 +102,14 @@ class Retriever:
 
         pool = [i for i in order if (cos_by_id[i] >= threshold or not apply_gate)]
         kept = self._collapse_duplicates(pool, top_k)
+        if include_versions:
+            kept = self._with_version_siblings(kept, q, threshold, apply_gate)
         results = [
             RetrievedChunk(
                 chunk=self.store.chunks[i],
-                dense_score=round(cos_by_id[i], 4),
+                dense_score=round(float(self.store.vectors[i] @ q), 4),
                 bm25_score=round(float(bm[i]), 4),
-                rank_score=round(ranked[i], 5),
+                rank_score=round(ranked.get(i, 0.0), 5),
                 also_in=sorted(also),
             )
             for i, also in kept
@@ -118,6 +121,31 @@ class Retriever:
             query, mode, results, passed, round(top_score, 4), threshold, nearest,
             self._conflict_hints(results), len(order),
         )
+
+    def _with_version_siblings(self, kept: list[tuple[int, set[str]]], q: np.ndarray, threshold: float,
+                               apply_gate: bool, limit: int = 2) -> list[tuple[int, set[str]]]:
+        """Two versions of a document are near-identical, so a question can rank only ONE version's chunk in the top-k and
+        the conflict is never seen. For the best chunks, also pull in the matching chunk from another document when it is
+        similar (>= conflict_similarity) but holds different numbers. Capped at `limit` extra passages."""
+        have = {i for i, _ in kept}
+        extra: list[int] = []
+        for i, _ in kept[:3]:
+            ci = self.store.chunks[i]
+            sims = self.store.vectors @ self.store.vectors[i]
+            for j in np.argsort(-sims)[:10]:
+                j = int(j)
+                cj = self.store.chunks[j]
+                if sims[j] < self.s.conflict_similarity:
+                    break
+                if j in have or j in extra or cj.doc_id == ci.doc_id or numbers(ci.text) == numbers(cj.text):
+                    continue
+                if apply_gate and float(self.store.vectors[j] @ q) < threshold:
+                    continue
+                extra.append(j)
+                break
+            if len(extra) >= limit:
+                break
+        return kept + [(j, set()) for j in extra]
 
     def _collapse_duplicates(self, pool: list[int], top_k: int) -> list[tuple[int, set[str]]]:
         """Merge exact and near duplicates, but NEVER merge chunks whose numbers differ:

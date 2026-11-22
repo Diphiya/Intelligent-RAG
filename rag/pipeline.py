@@ -124,7 +124,7 @@ class RAGPipeline:
             raise LLMUnavailable("ANTHROPIC_API_KEY is not configured, so answers cannot be generated.")
 
         standalone = rewrite_question(self.llm, self.s.rewrite_model, question, history)
-        result = self.retriever.retrieve(standalone)
+        result = self.retriever.retrieve(standalone, include_versions=True)
         info = RetrievalInfo(
             mode=result.mode, top_score=result.top_score, threshold=result.threshold, passed_gate=result.passed,
             chunks_used=len(result.chunks),

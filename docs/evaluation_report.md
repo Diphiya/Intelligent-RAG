@@ -8,10 +8,10 @@
 | Changes made *because of* Run 1 (chunk 400, gate 0.60, grounding fix, metric fix, 5 paraphrase queries) | ✅ implemented and unit-tested |
 | **Run 2** — same real setup, 25 queries, after those changes | ✅ measured (§2–§5, §7). It exposed a new problem: 3 false refusals (§5) |
 | **Run 3** — after adding a repair retry for uncited answers | ✅ measured (§5): false refusals 3 → 1 |
-| Fix for the remaining empty-answer failures (reject incomplete tool calls, retry truncated output, larger token budget) | ✅ implemented and unit-tested (91 tests) |
+| Fix for the remaining empty-answer failures (reject incomplete tool calls, retry truncated output, larger token budget) | ✅ implemented and unit-tested (94 tests) |
 | **Run 4** — after that fix | ✅ measured (§5): 20/20 answerable correct and cited, 5/5 refused, no warnings. See the caveat: the fix was never triggered |
 | Offline lexical baseline (no model download) | ✅ `eval_results_hashing.md` (weaker embedder, used to show the vocabulary-gap failure) |
-| Pipeline logic (abstention, citations, conflicts, follow-ups, retries, API errors) | ✅ 91 automated tests with a scripted stand-in for Claude |
+| Pipeline logic (abstention, citations, conflicts, follow-ups, retries, API errors) | ✅ 94 automated tests with a scripted stand-in for Claude |
 
 The evaluation is the improvement loop the assessment asks for: each run exposed problems, §6 lists what changed, the next run re-measures.
 
@@ -102,7 +102,8 @@ Findings:
 7. **Scanned PDF, corrupt/oversized/unsupported files, exact duplicates** → clean errors / `duplicate` status; parametrised tests.
 8. **Vocabulary gap.** Offline keyword-only embedder and BM25 both miss paraphrase q22. The semantic embedder finds it (confirmed in Run 2).
 9. **Follow-ups.** Live demo: "And how often does it have to be changed?" was rewritten and answered (180 days). q13 was refused in Run 2 (item 2) and answered correctly in Run 3.
-10. **Non-determinism.** The SDK reports it does not accept `temperature`, so Claude's answers can vary between runs; results should be read as ±1–3 questions.
+10. **Multi-turn bugs found in manual testing (after Run 4; the batch evaluation asks every question in a fresh session, so it could not see them).** In a 4-question chat the model (a) *"corrected" its earlier answers* ("the passages do not state a minimum password length … that earlier answer was unsupported", later reversed again) because the earlier answers were included in its prompt and it audited them against the new passages; (b) triggered false `unsupported_number` warnings (the plain label "S1" and the year in a file name counted as numbers), dropping confidence to low on correct answers; (c) answered the leave question from the 2023 policy only and said the 2024 policy "doesn't state the annual leave entitlement", because only one version's chunk reached the top 5 (the same question phrased "full-time employees" had worked in the evaluation). Fixes: the answering model no longer receives the chat history (the follow-up rewriter already resolves it into a standalone question) and is told to answer only the current question; label names and the file names of all shown passages are not counted as unsupported numbers; retrieval now adds, for the top-3 chunks, the most similar chunk from *another document* when its numbers differ (capped at 2 extra passages), so conflicting versions reach the model together. All covered by unit tests (94). **Not re-measured with real embeddings**: the sandbox could not load bge-small, so the sibling mechanism is verified with the lexical embedder only; re-run the question in the app to confirm. Lesson: evaluate multi-turn sessions, not only isolated questions (future work).
+11. **Non-determinism.** The SDK reports it does not accept `temperature`, so Claude's answers can vary between runs; results should be read as ±1–3 questions.
 
 ## 7. Chunk-size sweep — real embeddings (hybrid)
 | chunk size | chunks | Hit@1 Run 1 | Hit@1 Run 2 | Hit@3 | MRR (Run 2) | EvRecall@5 | P@3 |

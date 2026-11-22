@@ -78,7 +78,9 @@ def test_followup_is_rewritten_with_history_and_retrieval_uses_rewrite(make_pipe
     r = p.ask("And how often does it have to be changed?", "s1")
     assert r.rewritten_query == "How often must passwords be rotated?"
     assert "180 days" in llm.calls[-1]["user"]                       # retrieval used the rewritten query
-    assert "<conversation>" in llm.calls[-1]["user"] and "minimum password length" in llm.calls[-1]["user"]
+    prompt = llm.calls[-1]["user"]
+    assert "<conversation>" not in prompt and "Assistant:" not in prompt     # earlier answers are never shown to the answering model
+    assert "(Interpreted as: How often must passwords be rotated?)" in prompt
     assert r.answerable
 
 

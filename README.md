@@ -65,7 +65,7 @@ rag/
   generation.py      prompt + structured output           grounding.py             post-LLM verification
   memory.py          sessions + query rewriting           pipeline.py              orchestration
   api.py             FastAPI                              cli.py                   small CLI
-static/index.html    web UI          tests/   91 tests          evaluation/run_eval.py   metrics harness
+static/index.html    web UI          tests/   94 tests          evaluation/run_eval.py   metrics harness
 data/sample_docs/    6 docs incl. a version conflict, an exact duplicate, a prompt-injection line
 data/eval/queries.json   20 labelled test queries          data/edge_cases/   scanned-style PDF (no text layer)
 docs/                architecture, decisions, reasoning, evaluation report, limitations, AI disclosure, demo script
@@ -74,7 +74,7 @@ docs/                architecture, decisions, reasoning, evaluation report, limi
 ## Tests and evaluation
 
 ```bash
-python -m pytest tests -q                                   # 91 tests, no API key / network needed (Claude is stubbed)
+python -m pytest tests -q                                   # 94 tests, no API key / network needed (Claude is stubbed)
 python -m evaluation.run_eval --calibrate --chunk-sweep     # retrieval + gate metrics, offline lexical embedder
 # full run on your machine (real embeddings + real Claude):
 python -m evaluation.run_eval --backend sentence-transformers --calibrate --chunk-sweep --llm

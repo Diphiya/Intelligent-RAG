@@ -61,3 +61,13 @@ def test_modes_all_work(make_pipeline):
 def test_empty_store_returns_nothing(make_pipeline):
     res = make_pipeline(load_samples=False).retriever.retrieve("anything")
     assert not res.passed and not res.chunks
+
+
+def test_version_siblings_bring_in_the_other_policy_version(make_pipeline):
+    r = make_pipeline().retriever
+    q = "How many days of paid annual leave do full-time employees get?"
+    plain = r.retrieve(q, top_k=1, apply_gate=False)
+    wide = r.retrieve(q, top_k=1, apply_gate=False, include_versions=True)
+    assert len({rc.chunk.source for rc in plain.chunks}) == 1
+    assert {"hr_leave_policy_2023.txt", "hr_leave_policy_2024.txt"} <= {rc.chunk.source for rc in wide.chunks}
+    assert len(wide.chunks) <= 1 + 2 and wide.conflicts          # capped, and the conflict hint is produced
