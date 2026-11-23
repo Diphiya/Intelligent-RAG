@@ -1,4 +1,4 @@
-# Problem 1 — Intelligent Document Retrieval & Question Answering (RAG)
+Intelligent Document Retrieval & Question Answering (RAG)
 
 Upload PDF/TXT files, ask questions, get **grounded answers with citations** from **Claude (Anthropic)**.
 The system refuses to guess: if the documents don't contain the answer, it says so.
@@ -81,14 +81,3 @@ python -m evaluation.run_eval --backend sentence-transformers --calibrate --chun
 python -m evaluation.run_eval --backend sentence-transformers --embedding-model sentence-transformers/all-MiniLM-L6-v2 --calibrate   # compare embedders
 ```
 
-## Documentation map (maps 1:1 to the assessment deliverables)
-
-| Deliverable | File |
-|---|---|
-| Architecture diagram | `docs/architecture.png` (source `architecture.dot`), explained in `docs/architecture.md` |
-| Technical decision log (≥3) | `docs/decisions.md` (8 decisions) |
-| Reasoning challenges 1–7 | `docs/reasoning.md` |
-| Evaluation report (≥10 queries, ≥3 failure cases) | `docs/evaluation_report.md`, raw output `docs/eval_results_hashing.md` |
-| Limitations & improvements | `docs/limitations.md` |
-| AI tool disclosure | `docs/ai_disclosure.md` |
-| Demo video script | `docs/demo_script.md` |
